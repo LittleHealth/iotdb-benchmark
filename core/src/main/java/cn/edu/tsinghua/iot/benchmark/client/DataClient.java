@@ -22,6 +22,7 @@ package cn.edu.tsinghua.iot.benchmark.client;
 import cn.edu.tsinghua.iot.benchmark.client.generate.GenerateDataDeviceClient;
 import cn.edu.tsinghua.iot.benchmark.client.generate.GenerateDataMixClient;
 import cn.edu.tsinghua.iot.benchmark.client.generate.GenerateDataWriteClient;
+import cn.edu.tsinghua.iot.benchmark.client.operation.Operation;
 import cn.edu.tsinghua.iot.benchmark.client.real.RealDataSetQueryClient;
 import cn.edu.tsinghua.iot.benchmark.client.real.RealDataSetWriteClient;
 import cn.edu.tsinghua.iot.benchmark.conf.Config;
@@ -134,11 +135,28 @@ public abstract class DataClient implements Runnable {
           service.scheduleAtFixedRate(
               () -> {
                 String percent = String.format("%.2f", (loopIndex + 1) * 100.0D / this.totalLoop);
-                LOGGER.info("{} {}% workload is done.", currentThread, percent);
+                LOGGER.info(
+                    "{} {}% workload is done. {}  {}",
+                    currentThread,
+                    percent,
+                    measurement.getOkPointNum(Operation.INGESTION),
+                    measurement.getOkPointNum(Operation.AGG_RANGE_QUERY));
               },
               1,
               config.getLOG_PRINT_INTERVAL(),
               TimeUnit.SECONDS);
+          //          service.scheduleAtFixedRate(
+          //                  () -> {
+          //                    List<Operation> operations = Operation.getNormalOperation();
+          //                    measurement.setElapseTime();
+          //                    measurement.calculateMetrics(operations);
+          //                    measurement.showMeasurements(operations);
+          //                    measurement.showMetrics(operations);
+          //                    measurement.outputCSV();
+          //                  },
+          //                  1,
+          //                  config.getLOG_PRINT_INTERVAL(),
+          //                  TimeUnit.SECONDS);
         }
 
         doTest();

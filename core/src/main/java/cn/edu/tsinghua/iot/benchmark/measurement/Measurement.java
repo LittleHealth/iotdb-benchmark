@@ -48,7 +48,9 @@ public class Measurement {
   private static final Map<Operation, Double> operationLatencySumAllClient =
       new EnumMap<>(Operation.class);
   private final AtomicDouble createSchemaTime = new AtomicDouble(0.0);
-  private double elapseTime;
+  private double elapseTime = Double.MIN_NORMAL;
+
+  private double startTime = System.nanoTime();
   private final Map<Operation, Double> operationLatencySumThisClient;
   private final Map<Operation, Long> okOperationNumMap;
   private final Map<Operation, Long> failOperationNumMap;
@@ -418,7 +420,7 @@ public class Measurement {
     return operationLatencySumThisClient;
   }
 
-  private long getOkOperationNum(Operation operation) {
+  public long getOkOperationNum(Operation operation) {
     return okOperationNumMap.get(operation);
   }
 
@@ -426,7 +428,7 @@ public class Measurement {
     return failOperationNumMap.get(operation);
   }
 
-  private long getOkPointNum(Operation operation) {
+  public long getOkPointNum(Operation operation) {
     return okPointNumMap.get(operation);
   }
 
@@ -471,5 +473,11 @@ public class Measurement {
 
   public void setElapseTime(double elapseTime) {
     this.elapseTime = elapseTime;
+  }
+
+  public void setElapseTime() {
+    double endTime = System.nanoTime();
+    this.elapseTime = (endTime - startTime) / 1000000000.0d;
+    startTime = endTime;
   }
 }
